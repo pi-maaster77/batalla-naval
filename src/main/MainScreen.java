@@ -59,6 +59,7 @@ public class MainScreen extends JFrame {
     new Barco(1, 4, new Color(0xF000FF), 3, 0);
     new Barco(1, 5, new Color(0xAA02C4), 4, 0);
     new Barco(2, 5, new Color(0x00FF00), 5, 0);
+    new Barco(0, 0, new Color(0x00FF00), 6, 0);
 
     JButton button = new JButton("Obtener Coordenadas");
     button.addActionListener(e -> {
@@ -189,10 +190,10 @@ public class MainScreen extends JFrame {
           return;
         }
         if (golpeo) {
-          grillaPropia.add(new CircleElement(punto));
+          grillaPropia.add(new CircleElement(punto), 2);
           peer.enviarMensaje("true");
         } else {
-          grillaPropia.add(new CrossElement(punto));
+          grillaPropia.add(new CrossElement(punto), JLayeredPane.DRAG_LAYER + 1);
           peer.enviarMensaje("false");
           suTurno();
         }

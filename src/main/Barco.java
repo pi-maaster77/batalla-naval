@@ -5,7 +5,6 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.SwingUtilities;
 
 public class Barco extends JLabel {
@@ -22,10 +21,10 @@ public class Barco extends JLabel {
     setBackground(color);
     setBounds(x * MainScreen.CELL_SIZE, y * MainScreen.CELL_SIZE, this.ancho * MainScreen.CELL_SIZE,
         this.alto * MainScreen.CELL_SIZE);
-    MainScreen.barcos.add(this);
-    MainScreen.grillaPropia.add(this, JLayeredPane.DRAG_LAYER);
     MainScreen.grillaPropia.revalidate();
     MainScreen.grillaPropia.repaint();
+    MainScreen.barcos.add(this);
+    MainScreen.grillaPropia.add(this, 1);
     obtenerCasillasOcupadas();
 
     addMouseListener(new MouseAdapter() {
@@ -36,7 +35,8 @@ public class Barco extends JLabel {
         MainScreen.draggedElement = Barco.this;
         initialClick = e.getPoint();
         initialPosition = MainScreen.draggedElement.getLocation();
-        getParent().repaint();
+        MainScreen.grillaPropia.revalidate();
+        MainScreen.grillaPropia.repaint();
       }
 
       @Override

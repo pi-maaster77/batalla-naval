@@ -6,12 +6,10 @@ import java.awt.Color;
 import javax.swing.JLabel;
 
 public class BorderSquareElement extends JLabel {
-  protected Integer width;
-  protected Integer height;
+  protected static Integer width = 1;
+  protected static Integer height = 1;
 
   public BorderSquareElement() {
-    this.width = 1;
-    this.height = 1;
     setOpaque(false);
   }
 
