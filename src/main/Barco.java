@@ -102,22 +102,19 @@ public class Barco extends JLabel {
     return casillasOcupadas;
   }
 
-  public void imprimirCasillasOcupadas() {
-    for (Integer[] casilla : casillasOcupadas) {
-      System.out.println("[" + casilla[0] + ", " + casilla[1] + "]");
-    }
-  }
-
-  public boolean golpear(String casillaGolpeada) {
+  public String golpear(String casillaGolpeada) {
     for (int i = 0; i < casillasOcupadas.size(); i++) {
       String casilla = String.valueOf(casillasOcupadas.get(i)[0]) + String.valueOf(casillasOcupadas.get(i)[1]);
-      System.out.println(casilla);
       if (casilla.equals(casillaGolpeada)) {
         casillasOcupadas.remove(i);
-        return true;
+        if (casillasOcupadas.size() < 1) {
+          return "true" + String.valueOf(getX() / MainScreen.CELL_SIZE) + String.valueOf(getY() / MainScreen.CELL_SIZE)
+              + String.valueOf(alto) + String.valueOf(ancho);
+        }
+        return "true";
       }
     }
-    return false;
+    return "false";
   }
 
   public String getDimentions() {

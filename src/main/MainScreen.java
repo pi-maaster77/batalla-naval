@@ -7,7 +7,6 @@ import javax.swing.JLayeredPane;
 import javax.swing.Timer;
 
 import java.awt.Color;
-import java.awt.Point;
 import java.awt.Dimension;
 import java.awt.BorderLayout;
 
@@ -59,17 +58,12 @@ public class MainScreen extends JFrame {
     new Barco(1, 4, new Color(0xF000FF), 3, 0);
     new Barco(1, 5, new Color(0xAA02C4), 4, 0);
     new Barco(2, 5, new Color(0x00FF00), 5, 0);
-    new Barco(0, 0, new Color(0x00FF00), 6, 0);
+    new Barco(0, 0, new Color(0x00FF00), 0, 0);
 
     JButton button = new JButton("Obtener Coordenadas");
     button.addActionListener(e -> {
       enableDrag = false;
-      for (Barco elem : barcos) {
-        Point location = elem.getLocation();
-        System.out.println("Coordenadas de la parte superior izquierda: " + location.x + ", " + location.y + ", "
-            + elem.getDimentions());
-        hitting = true;
-      }
+      hitting = true;
       peer.enviarMensaje("true");
       peer.setMensajeListener(new MensajeListener() {
         @Override
@@ -119,7 +113,6 @@ public class MainScreen extends JFrame {
         if (hitting) {
           Integer[] coordenadas = { e.getX() / 50, e.getY() / 50 };
           if (hits.contains(new Coordenada(coordenadas[0], coordenadas[1]))) {
-            System.out.println("¡Esta casilla ya ha sido golpeada!");
             return; // Evitar acciones adicionales si la casilla ya ha sido golpeada
           }
           hitting = false;
@@ -131,15 +124,19 @@ public class MainScreen extends JFrame {
               if (mensaje.length() > 2) {
                 if (!hits.contains(new Coordenada(coordenadas[0], coordenadas[1]))) {
                   hits.add(new Coordenada(coordenadas[0], coordenadas[1]));
-                  System.out.println("se golpeo: " + coordenadas[0] + "," + coordenadas[1]);
-                  if (mensaje.equals("true") || mensaje.equals("ganaste")) {
+                  if (mensaje.contains("true") || mensaje.equals("ganaste")) {
                     grillaContrincante.add(new CircleElement(coordenadas), JLayeredPane.DRAG_LAYER + 1);
                     if (mensaje.equals("ganaste")) {
                       System.out.println("ganamos");
                       gameOver = true; // Establecer el estado del juego como terminado
                       new Ganamos();
+                    } else if (!mensaje.equals("true")) {
+                      Integer x = mensaje.charAt(4) - '0';
+                      Integer y = mensaje.charAt(5) - '0';
+                      Integer w = mensaje.charAt(6) - '0';
+                      Integer h = mensaje.charAt(7) - '0';
+                      new BarcoHundido(h, w, Color.red, x, y);
                     }
-
                     hitting = true;
                   } else {
                     grillaContrincante.add(new CrossElement(coordenadas), JLayeredPane.DRAG_LAYER + 1000);
@@ -176,11 +173,14 @@ public class MainScreen extends JFrame {
         if (gameOver)
           return; // Detener si el juego ha terminado
         Boolean perdimos = true;
-        Boolean golpeo = false;
+        String golpeo = "false";
         Integer[] punto = { mensaje.charAt(0) - '0', mensaje.charAt(1) - '0' };
         for (Barco barco : barcos) {
-          golpeo = barco.golpear(mensaje) || golpeo;
-          perdimos = perdimos && barco.casillasOcupadas.size() == 0;
+          String golpe = barco.golpear(mensaje);
+          System.out.println(golpe);
+          golpeo = (golpe.equals("false")) ? golpeo : golpe;
+          perdimos = barco.casillasOcupadas.size() < 1 && perdimos;
+
         }
         if (perdimos) {
           System.out.println("perdimos");
@@ -189,15 +189,13 @@ public class MainScreen extends JFrame {
           gameOver = true; // Establecer el estado del juego como terminado
           return;
         }
-        if (golpeo) {
+        if (!golpeo.equals("false")) {
           grillaPropia.add(new CircleElement(punto), 2);
-          peer.enviarMensaje("true");
         } else {
           grillaPropia.add(new CrossElement(punto), JLayeredPane.DRAG_LAYER + 1);
-          peer.enviarMensaje("false");
           suTurno();
         }
-
+        peer.enviarMensaje(golpeo);
       }
     });
 
