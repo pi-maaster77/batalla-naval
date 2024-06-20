@@ -4,7 +4,7 @@ import java.io.*;
 import java.net.*;
 
 public class Peer {
-  private static final Integer PUERTO = 12345; // Puerto en el que cada peer escuchará
+  private Integer puertoMio;
   private String hostRemoto;
   private Integer puertoRemoto;
   private MensajeListener mensajeListener;
@@ -14,9 +14,10 @@ public class Peer {
     this.puertoRemoto = puertoRemoto;
   }
 
-  public Peer(int puertoRemoto) {
-    this.hostRemoto = IngresarIp.obtenerIp();
+  public Peer(String hostRemoto, Integer puertoRemoto, Integer puertoMio) {
+    this.hostRemoto = hostRemoto;
     this.puertoRemoto = puertoRemoto;
+    this.puertoMio = puertoMio;
   }
 
   public void setMensajeListener(MensajeListener mensajeListener) {
@@ -28,8 +29,8 @@ public class Peer {
   }
 
   private void iniciarServidor() {
-    try (ServerSocket servidor = new ServerSocket(PUERTO)) {
-      System.out.println("Servidor escuchando en el puerto " + PUERTO);
+    try (ServerSocket servidor = new ServerSocket(puertoMio)) {
+      System.out.println("Servidor escuchando en el puerto " + puertoMio);
       while (true) {
         try (Socket socket = servidor.accept()) {
           BufferedReader entrada = new BufferedReader(new InputStreamReader(socket.getInputStream()));
@@ -64,7 +65,7 @@ public class Peer {
 
   public static void main(String[] args) {
 
-    Peer peer = new Peer(12345);
+    Peer peer = new Peer(IngresarIp.obtenerIp(), 12345);
     peer.iniciar();
   }
 }

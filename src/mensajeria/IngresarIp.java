@@ -91,7 +91,6 @@ public class IngresarIp {
 
   private static void scanNetwork(String subred) {
     ExecutorService executor = Executors.newFixedThreadPool(20);
-
     for (int i = 1; i < 255; i++) {
       String host = subred + i;
       executor.submit(() -> {

@@ -69,7 +69,7 @@ public class MainScreen extends JFrame {
         @Override
         public void onMensajeRecibido(String mensaje) {
           if (!gameOver) {
-            if (mensaje.equals("true")) {
+            if (mensaje.contains("true")) {
               suTurno();
             } else {
               miTurno();
@@ -172,6 +172,9 @@ public class MainScreen extends JFrame {
       public void onMensajeRecibido(String mensaje) {
         if (gameOver)
           return; // Detener si el juego ha terminado
+        if (mensaje.equals(".")) {
+          return;
+        }
         Boolean perdimos = true;
         String golpeo = "false";
         Integer[] punto = { mensaje.charAt(0) - '0', mensaje.charAt(1) - '0' };
@@ -193,7 +196,17 @@ public class MainScreen extends JFrame {
           grillaPropia.add(new CircleElement(punto), 2);
         } else {
           grillaPropia.add(new CrossElement(punto), JLayeredPane.DRAG_LAYER + 1);
-          suTurno();
+          Timer timer = new Timer(2000, new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent evt) {
+              if (!gameOver) { // Verificar si el juego no ha terminado
+                suTurno();
+              }
+              ((Timer) evt.getSource()).stop();
+            }
+          });
+          timer.setRepeats(false);
+          timer.start();
         }
         peer.enviarMensaje(golpeo);
       }
@@ -206,7 +219,7 @@ public class MainScreen extends JFrame {
   }
 
   public void suTurno() {
-    peer.enviarMensaje("miturno");
+    peer.enviarMensaje(".");
     hitting = true;
     add(grillaContrincante, BorderLayout.CENTER);
     grillaContrincante.setVisible(true);

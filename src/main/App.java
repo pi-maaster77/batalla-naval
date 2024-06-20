@@ -1,6 +1,6 @@
 package main;
 
-import javax.swing.*;
+import javax.swing.SwingUtilities;
 
 import mensajeria.IngresarIp;
 import mensajeria.Peer;
@@ -8,7 +8,6 @@ import mensajeria.Peer;
 public class App {
   public static void main(String[] args) {
     String ip = (args.length > 0) ? args[0] : IngresarIp.obtenerIp();
-    // String ip = "192.168.122.78";
-    SwingUtilities.invokeLater(() -> new MainScreen(new Peer(ip, 12345)));
+    SwingUtilities.invokeLater(() -> new MainScreen(new Peer(ip, 12345, 12345)));
   }
 }
